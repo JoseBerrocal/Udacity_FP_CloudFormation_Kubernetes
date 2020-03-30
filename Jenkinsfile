@@ -9,6 +9,16 @@ pipeline {
                  }
              }
 
+       stage('Test the files') {
+             steps {
+                 echo 'Test the files'
+                 sh "make lint"
+                 echo 'Test the files successfully'                 
+                 }
+             }
+
+
+
        stage('Deploy Infraestructure') {
              steps {
                  echo 'Deploy Infraestructure'
@@ -16,13 +26,6 @@ pipeline {
                  }
              }
 
-
-       stage('Test the files') {
-             steps {
-                 echo 'Test the files'
-                 echo 'Test the files successfully'                 
-                 }
-             }
 
 
        stage('Create the docker') {
