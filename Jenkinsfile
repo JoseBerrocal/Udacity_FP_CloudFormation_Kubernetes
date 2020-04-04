@@ -23,6 +23,8 @@ pipeline {
              steps {
                  echo 'Deploy Infraestructure'
                  sh "aws s3 ls"
+                 sh "./infraestructure/create.sh InfraFinalProject infraestructure/ourinfra.yml infraestructure/ourinfra-params.json"
+                 sh "sleep 40"
                  echo 'Deploy Infraestructure successfully'
                  }
              }

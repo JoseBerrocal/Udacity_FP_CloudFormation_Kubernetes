@@ -1,0 +1,12 @@
+[
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "UdacityFinalPro"
+    },    
+    {
+        "ParameterKey": "ClusterName",
+        "ParameterValue": "ClusterEKS-FP"
+    }
+
+]
+

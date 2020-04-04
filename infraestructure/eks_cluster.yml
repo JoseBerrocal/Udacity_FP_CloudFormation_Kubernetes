@@ -1,0 +1,47 @@
+Description: >
+    Carlos Rivas / Udacity
+    This template deploys a VPC, with a pair of public and private subnets spread 
+    across two Availabilty Zones. It deploys an Internet Gateway, with a default 
+    route on the public subnets. It deploys a pair of NAT Gateways (one in each AZ), 
+    and default routes for them in the private subnets.
+
+Parameters:
+
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+
+    ClusterName:
+        Description: Name of the cluster
+        Type: String
+        Default: ClusterEKSFP
+
+Resources:
+
+  MyEKSCluster:
+    Type: 'AWS::EKS::Cluster'
+    Properties:
+      Name: !Ref ClusterName
+      Version: '1.14'
+      RoleArn: >-
+        arn:aws:iam::545867861938:role/EKS-Service-Role
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue:
+              !Sub "${EnvironmentName}-SECURITY-GROUP"
+        SubnetIds:
+          - Fn::ImportValue:
+              !Sub ${EnvironmentName}-SUBNET-IDs-01
+          - Fn::ImportValue:
+              !Sub ${EnvironmentName}-SUBNET-IDs-02
+          - Fn::ImportValue:
+              !Sub ${EnvironmentName}-SUBNET-IDs-03
+          
+Outputs:
+
+  KubeClusterName:
+    Description: The Kubernetes cluster
+    Value: !Ref MyEKSCluster
+    Export:
+        Name: !Sub ${EnvironmentName}-KubeClusterName
+
