@@ -22,6 +22,7 @@ pipeline {
        stage('Deploy Infraestructure') {
              steps {
                  echo 'Deploy Infraestructure'
+                 sh "aws s3 ls"
                  echo 'Deploy Infraestructure successfully'
                  }
              }
