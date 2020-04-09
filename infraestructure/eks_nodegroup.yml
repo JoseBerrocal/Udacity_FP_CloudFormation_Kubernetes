@@ -282,6 +282,8 @@ Outputs:
   NodeInstanceRole:
     Description: The node instance role
     Value: !GetAtt NodeInstanceRole.Arn
+    Export:
+        Name: !Sub ${EnvironmentName}-Kube-Node-InstanceRole
 
   NodeSecurityGroup:
     Description: The security group for the node group
