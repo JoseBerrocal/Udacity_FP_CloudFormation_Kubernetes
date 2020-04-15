@@ -1,5 +1,12 @@
 pipeline {
+
+  environment {
+    repodocker = "joseberrocal/udacity_fp_cloudformation_kubernetes"
+    registryCredential = 'docker-hub'
+    dockerImage = ''
+  }
     agent any
+
     stages {
 
        stage('Test the Jenkinsfile') {
@@ -33,7 +40,7 @@ pipeline {
                 echo 'Create a EKS Nodes'
                 sh "./infraestructure/create.sh EKS-Nodes infraestructure/eks_nodegroup.yml infraestructure/eks_nodegroup-params.json"
                 sh "sleep 240"
-                echo 'EKS nodes deployed successfully'       */ 
+                echo 'EKS nodes deployed successfully'      
                 sh "kubectl config use-context arn:aws:eks:us-west-2:545867861938:cluster/ClusterEKS-FP"
                 sh "aws eks --region us-west-2 update-kubeconfig --name ClusterEKS-FP"
                 sh "sleep 5"
@@ -46,15 +53,20 @@ pipeline {
                 sh "kubectl get nodes"
                 sh "sleep 5"      
                 sh "kubectl get nodes"
-                sh "sleep 5"    
+                sh "sleep 5"     */ 
                 sh "kubectl get nodes"                                          
             }
         }
 
-       stage('Create the docker') {
+       stage('Build Docker Image') {
+
              steps {
-                 echo 'Creation of Docker'
-                 echo 'Creation of Docker successfully'
+                 checkout scm
+                echo 'Build Docker Image'
+                script {
+                    dockerImage = docker.build repodocker + ":$BUILD_NUMBER"
+                    }
+                 echo 'Creation of Docker Image successfully'
                  }
              }
 
