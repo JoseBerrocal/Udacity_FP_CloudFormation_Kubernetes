@@ -40,7 +40,7 @@ pipeline {
                 echo 'Create a EKS Nodes'
                 sh "./infraestructure/create.sh EKS-Nodes infraestructure/eks_nodegroup.yml infraestructure/eks_nodegroup-params.json"
                 sh "sleep 240"
-                echo 'EKS nodes deployed successfully'      
+                echo 'EKS nodes deployed successfully'      */ 
                 sh "kubectl config use-context arn:aws:eks:us-west-2:545867861938:cluster/ClusterEKS-FP"
                 sh "aws eks --region us-west-2 update-kubeconfig --name ClusterEKS-FP"
                 sh "sleep 5"
@@ -53,7 +53,7 @@ pipeline {
                 sh "kubectl get nodes"
                 sh "sleep 5"      
                 sh "kubectl get nodes"
-                sh "sleep 5"     */ 
+                sh "sleep 5"     
                 sh "kubectl get nodes"                                          
             }
         }
@@ -73,7 +73,12 @@ pipeline {
 
        stage('Upload the docker image') {
              steps {
-                 echo 'Upload of Docker'
+                echo 'Upload of Docker'
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push('latest')
+                        }
+                    }
                  echo 'Upload of Docker sucessfully'
                  }
              }
