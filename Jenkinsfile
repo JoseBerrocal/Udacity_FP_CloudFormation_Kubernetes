@@ -88,7 +88,25 @@ pipeline {
        stage('Deploy the application using kubernetes') {
              steps {
                  echo 'Deploy the application using kubernetes'
+                 echo 'Creating the deployment'
+                 sh "kubectl create -f deployment_helloworld.yaml"
+                 echo 'Exposing the http service'
+                 sh "kubectl expose deployment hello-world --type=LoadBalancer --name=hello-world-svc-http"
+                 sh "sleep 15"
+                 sh "kubectl get pods"
+                 sh "kubectl get deployment"
+                 sh "kubectl get svc"
+                 sh "sh ext_ip_svc.sh"
                  echo 'Deploy the application using kubernetes sucessfully'
+                 }
+             }
+
+       stage('Remove Unused docker image') {
+             steps {
+                echo 'Remove Unused docker image'
+                sh "docker rmi $repodocker:$BUILD_NUMBER"
+                sh "docker rmi $repodocker:latest"
+                 echo 'Remove Unused docker image sucessfully'
                  }
              }
 
