@@ -16,19 +16,22 @@ pipeline {
                  }
              }
 
-       stage('Test the files') {
+       stage('Test the Files') {
              steps {
-                 echo 'Test the files'
+                 echo 'Test the Files'
                  sh "make lint"
-                 echo 'Test the files successfully'                 
+                 echo 'Test the Files successfully'                 
                  }
              }
 
 
 
        stage('Deploy Infraestructure') {
+           when {
+               branch 'master'
+           }
              steps {
-       /*       echo 'Create a  VPC for the EKS'
+                echo 'Create a  VPC for the EKS'
                 sh "aws s3 ls"
                 sh "./infraestructure/create.sh InfraFinalProject infraestructure/ourinfra.yml infraestructure/ourinfra-params.json"
                 sh "sleep 100"
@@ -40,7 +43,7 @@ pipeline {
                 echo 'Create a EKS Nodes'
                 sh "./infraestructure/create.sh EKS-Nodes infraestructure/eks_nodegroup.yml infraestructure/eks_nodegroup-params.json"
                 sh "sleep 240"
-                echo 'EKS nodes deployed successfully'      */ 
+                echo 'EKS nodes deployed successfully'
                 sh "kubectl config use-context arn:aws:eks:us-west-2:545867861938:cluster/ClusterEKS-FP"
                 sh "aws eks --region us-west-2 update-kubeconfig --name ClusterEKS-FP"
                 sh "sleep 5"
@@ -71,24 +74,30 @@ pipeline {
              }
 
 
-       stage('Upload the docker image') {
+       stage('Upload the Docker Image') {
              steps {
                 echo 'Upload of Docker'
                 script {
                     docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
                         dockerImage.push('latest')
                         }
                     }
-                 echo 'Upload of Docker sucessfully'
+                 echo 'Upload of Docker Image sucessfully'
                  }
              }
 
 
 
-       stage('Deploy the application using kubernetes') {
+       stage('Deploy the Application') {
+           when {
+               branch 'master'
+           }           
              steps {
-                 echo 'Deploy the application using kubernetes'
+                 echo 'Deploy the Application'
                  echo 'Creating the deployment'
+                 sh "aws eks --region us-west-2 update-kubeconfig --name ClusterEKS-FP"
+                 sh "sleep 5"
                  sh "kubectl create -f deployment_helloworld.yaml"
                  echo 'Exposing the http service'
                  sh "kubectl expose deployment hello-world --type=LoadBalancer --name=hello-world-svc-http"
@@ -97,16 +106,39 @@ pipeline {
                  sh "kubectl get deployment"
                  sh "kubectl get svc"
                  sh "sh ext_ip_svc.sh"
-                 echo 'Deploy the application using kubernetes sucessfully'
+                 echo 'Deploy the Application sucessfully'
                  }
              }
 
-       stage('Remove Unused docker image') {
+
+       stage('Application Update') {
+           when {
+               branch 'deploy_app'
+           }           
              steps {
-                echo 'Remove Unused docker image'
+                 echo 'Application Update'
+                 echo 'Updating the deployment'
+                 sh "aws eks --region us-west-2 update-kubeconfig --name ClusterEKS-FP"
+                 sh "sleep 5"
+                 sh "kubectl get pods"
+                 sh "sed -i 's|latest|${BUILD_NUMBER}|g' deployment_helloworld.yaml"
+                 sh "kubectl apply -f deployment_helloworld.yaml"
+                 sh "sleep 7"
+                 sh "kubectl get pods"
+                 sh "sleep 20"
+                 sh "kubectl get pods"                
+                 sh "sh ext_ip_svc.sh"
+                 echo 'Application Update sucessfully'
+                 }
+             }
+
+
+       stage('Remove Unused Docker Image') {
+             steps {
+                echo 'Remove Unused Docker Image'
                 sh "docker rmi $repodocker:$BUILD_NUMBER"
                 sh "docker rmi $repodocker:latest"
-                 echo 'Remove Unused docker image sucessfully'
+                 echo 'Remove Unused Docker Image sucessfully'
                  }
              }
 
