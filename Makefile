@@ -26,6 +26,6 @@ lint:
 	.fpclouddevops/bin/hadolint Dockerfile
 	# This is a linter for Python source code linter: https://www.pylint.org/
 	# This should be run from inside a virtualenv
-	# .fpclouddevops/bin/pylint --disable=R,C,W1202 hello.py
+	pylint --disable=R,C,W1202 hello.py
 
 all: install lint test
