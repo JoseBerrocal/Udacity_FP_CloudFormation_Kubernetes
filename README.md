@@ -65,6 +65,10 @@ When **deploy_app** branch is executed the following stages of Jenkinsfile will 
 
 ![alt text](https://github.com/JoseBerrocal/Udacity_FP_CloudFormation_Kubernetes/blob/improve_text_file/images/Udpate_Hello_app.png "Application Update")
 
+Check the "Application Update" stage to observe the Rolling Deployment
+
+![alt text](https://github.com/JoseBerrocal/Udacity_FP_CloudFormation_Kubernetes/blob/improve_text_file/images/Rolling_Update.png "Rolling Deployment")
+
 In case the sintax of the app update is incorrect the following output will be shown
 
 ![alt text](https://github.com/JoseBerrocal/Udacity_FP_CloudFormation_Kubernetes/blob/improve_text_file/images/Fail_Lint_Top.png "Fail Lint Check")
