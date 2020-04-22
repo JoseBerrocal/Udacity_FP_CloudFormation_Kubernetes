@@ -1,6 +1,12 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Amazon EKS Sample VPC'
+Description: >
+    Jose Berrocal / Udacity
+    Amazon EKS Sample VPC
+    This template deploys a VPC, with a private subnets spread across two 
+    Availabilty Zones. It deploys an Internet Gateway, with a default 
+    route on the subnets.
 
 Parameters:
 
